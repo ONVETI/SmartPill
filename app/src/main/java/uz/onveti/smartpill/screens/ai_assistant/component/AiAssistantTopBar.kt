@@ -1,0 +1,25 @@
+package uz.onveti.smartpill.screens.ai_assistant.component
+
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import uz.onveti.smartpill.R
+import uz.onveti.smartpill.core.ui.SmartPillTopBar
+import uz.onveti.smartpill.screens.ai_assistant.state.AiAssistantAction
+import uz.onveti.smartpill.screens.ai_assistant.state.AiAssistantState
+
+@Composable
+internal fun AiAssistantTopBar(
+    state: AiAssistantState,
+    onAction: (AiAssistantAction) -> Unit,
+    modifier: Modifier = Modifier.padding(horizontal = 16.dp),
+) {
+    SmartPillTopBar(
+        title = stringResource(id = R.string.ai_title),
+        subtitle = stringResource(id = R.string.topbar_ai_subtitle),
+        onNavigateBack = { onAction(AiAssistantAction.NavigateBack) },
+        modifier = modifier,
+    )
+}

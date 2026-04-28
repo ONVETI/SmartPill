@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "841289610705",
+    "firebase_url": "https://oberton-26-default-rtdb.firebaseio.com",
+    "project_id": "oberton-26",
+    "storage_bucket": "oberton-26.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:841289610705:android:c18626720b3bddac99dcf0",
+        "android_client_info": {
+          "package_name": "com.ncorp.oberton"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCm5L1363f0HX8sVavN0qEd_v1NqfhD0mc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:841289610705:android:23e8254c2b4c40b199dcf0",
+        "android_client_info": {
+          "package_name": "uz.onveti.smartpill"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCm5L1363f0HX8sVavN0qEd_v1NqfhD0mc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
