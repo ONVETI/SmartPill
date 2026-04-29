@@ -1,5 +1,7 @@
 package uz.onveti.smartpill.screens.main
 
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -39,11 +41,28 @@ internal class MainViewModel(
             is MainAction.AiQuestionSubmitted -> onAiQuestionSubmitted()
             is MainAction.OpenDrawer -> onOpenDrawer()
             is MainAction.CloseDrawer -> onCloseDrawer()
+            is MainAction.ChangeLanguageClick -> onChangeLanguageClick()
+            is MainAction.DismissLanguageDialog -> onDismissLanguageDialog()
+            is MainAction.SelectLanguage -> onSelectLanguage(action.languageCode)
         }
     }
 
     private fun onNavigateBackClicked() = intent {
         postSideEffect(MainSideEffect.NavigateBack)
+    }
+
+    private fun onChangeLanguageClick() = intent {
+        reduce { state.copy(isLanguageDialogVisible = true) }
+    }
+
+    private fun onDismissLanguageDialog() = intent {
+        reduce { state.copy(isLanguageDialogVisible = false) }
+    }
+
+    private fun onSelectLanguage(languageCode: String) = intent {
+        reduce { state.copy(isLanguageDialogVisible = false) }
+        val appLocale: LocaleListCompat = LocaleListCompat.forLanguageTags(languageCode)
+        AppCompatDelegate.setApplicationLocales(appLocale)
     }
 
     private fun onModuleSelected(module: MainModule) = intent {

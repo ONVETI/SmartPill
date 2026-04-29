@@ -9,6 +9,7 @@ internal data class MainState(
     val aiQuestion: String = "",
     val aiMessages: List<AiMessage> = emptyList(),
     val isDrawerOpen: Boolean = false,
+    val isLanguageDialogVisible: Boolean = false,
 )
 
 internal enum class MainModule {

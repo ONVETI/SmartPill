@@ -8,4 +8,7 @@ internal sealed interface MainAction {
     data object AiQuestionSubmitted : MainAction
     data object OpenDrawer : MainAction
     data object CloseDrawer : MainAction
+    data object ChangeLanguageClick : MainAction
+    data object DismissLanguageDialog : MainAction
+    data class SelectLanguage(val languageCode: String) : MainAction
 }

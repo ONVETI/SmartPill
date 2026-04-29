@@ -3,15 +3,20 @@ package uz.onveti.smartpill.screens.ai_assistant
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -104,31 +109,98 @@ internal fun AiAssistantContent(
             )
         }
 
+        if (state.isLoading) {
+            item {
+                ChatBubble(
+                    label = stringResource(id = R.string.ai_answer_label),
+                    text = stringResource(id = R.string.ai_loading),
+                    containerColor = Color(0xFFF3E8FF),
+                )
+            }
+        }
+
         item {
-            OutlinedTextField(
-                value = state.question,
-                onValueChange = { onAction(AiAssistantAction.QuestionChanged(it)) },
-                modifier = Modifier.fillMaxWidth(),
-                label = {
-                    Text(text = stringResource(id = R.string.ai_question_hint))
-                },
-                trailingIcon = {
-                    IconButton(
-                        onClick = { onAction(AiAssistantAction.QuestionSubmitted) },
-                    ) {
+            QuestionInputBlock(
+                state = state,
+                onAction = onAction,
+            )
+        }
+    }
+}
+
+@Composable
+private fun QuestionInputBlock(
+    state: AiAssistantState,
+    onAction: (AiAssistantAction) -> Unit,
+) {
+    val suggestedQuestions = listOf(
+        stringResource(id = R.string.ai_suggestion_missed_dose),
+        stringResource(id = R.string.ai_suggestion_side_effect),
+        stringResource(id = R.string.ai_suggestion_best_time),
+        stringResource(id = R.string.ai_suggestion_double_dose),
+    )
+
+    Column(
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            suggestedQuestions.forEach { question ->
+                Surface(
+                    onClick = { onAction(AiAssistantAction.QuestionChanged(question)) },
+                    enabled = !state.isLoading,
+                    shape = RoundedCornerShape(12.dp),
+                    color = Color(0xFFEFF6FF),
+                    contentColor = Color(0xFF1D4ED8),
+                ) {
+                    Text(
+                        text = question,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                horizontal = 16.dp,
+                                vertical = 12.dp,
+                            ),
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                }
+            }
+        }
+
+        OutlinedTextField(
+            value = state.question,
+            onValueChange = { onAction(AiAssistantAction.QuestionChanged(it)) },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !state.isLoading,
+            label = {
+                Text(text = stringResource(id = R.string.ai_question_hint))
+            },
+            trailingIcon = {
+                IconButton(
+                    onClick = { onAction(AiAssistantAction.QuestionSubmitted) },
+                    enabled = !state.isLoading,
+                ) {
+                    if (state.isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                        )
+                    } else {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.Send,
                             contentDescription = stringResource(id = R.string.ai_send),
                         )
                     }
-                },
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-                keyboardActions = KeyboardActions(
-                    onSend = { onAction(AiAssistantAction.QuestionSubmitted) },
-                ),
-                minLines = 2,
-            )
-        }
+                }
+            },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+            keyboardActions = KeyboardActions(
+                onSend = { onAction(AiAssistantAction.QuestionSubmitted) },
+            ),
+            minLines = 2,
+        )
     }
 }
 

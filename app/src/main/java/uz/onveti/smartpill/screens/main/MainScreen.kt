@@ -55,6 +55,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.delay
 import uz.onveti.smartpill.R
+import uz.onveti.smartpill.screens.main.component.LanguageDialog
+import uz.onveti.smartpill.screens.main.component.MainTopBar
 import uz.onveti.smartpill.screens.ai_assistant.AiAssistantRoute
 import uz.onveti.smartpill.screens.main.state.MainAction
 import uz.onveti.smartpill.screens.main.state.MainModule
@@ -73,9 +75,16 @@ internal fun MainScreen(
     onAction: (MainAction) -> Unit,
     snackbarHostState: SnackbarHostState,
 ) {
+    if (state.isLanguageDialogVisible) {
+        LanguageDialog(onAction = onAction)
+    }
+
     Scaffold(
         topBar = {
-            MainTopBar()
+            MainTopBar(
+                state = state,
+                onAction = onAction,
+            )
         },
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)
@@ -114,32 +123,6 @@ internal fun MainContent(
             IbnSinoQuoteCard()
         }
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun MainTopBar() {
-    TopAppBar(
-        title = {
-            Column {
-                Text(
-                    text = stringResource(id = R.string.app_name),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                )
-                Text(
-                    text = stringResource(id = R.string.main_subtitle),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color(0xFF64748B),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color(0xFFF7FAFC),
-        ),
-    )
 }
 
 @Composable

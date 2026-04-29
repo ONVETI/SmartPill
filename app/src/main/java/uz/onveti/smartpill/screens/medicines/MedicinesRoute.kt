@@ -12,6 +12,8 @@ import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
+import uz.onveti.smartpill.screens.add_medicine.AddMedicineRoute
+import uz.onveti.smartpill.screens.medicine_detail.MedicineDetailRoute
 import uz.onveti.smartpill.screens.medicines.state.MedicinesSideEffect
 
 @Serializable
@@ -29,6 +31,12 @@ fun NavGraphBuilder.medicinesRoute(
         viewModel.collectSideEffect { sideEffect ->
             when (sideEffect) {
                 is MedicinesSideEffect.NavigateBack -> navController.navigateUp()
+
+                is MedicinesSideEffect.NavigateToAddMedicine -> navController.navigate(AddMedicineRoute)
+
+                is MedicinesSideEffect.NavigateToMedicineDetail -> navController.navigate(
+                    MedicineDetailRoute(sideEffect.medicineId)
+                )
 
                 is MedicinesSideEffect.Error -> scope.launch {
                     snackbarHostState.showSnackbar(sideEffect.throwable.message ?: "Unknown error occurred")

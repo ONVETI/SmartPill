@@ -1,6 +1,7 @@
 package uz.onveti.smartpill.screens.ai_assistant
 
 import androidx.lifecycle.ViewModel
+import uz.onveti.smartpill.data.ai.OpenAiRepository
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.viewmodel.container
@@ -10,7 +11,9 @@ import uz.onveti.smartpill.screens.ai_assistant.state.AiAssistantSideEffect
 import uz.onveti.smartpill.screens.ai_assistant.state.AiAssistantState
 import kotlinx.coroutines.CoroutineExceptionHandler
 
-internal class AiAssistantViewModel : ViewModel(), ContainerHost<AiAssistantState, AiAssistantSideEffect> {
+internal class AiAssistantViewModel(
+    private val openAiRepository: OpenAiRepository,
+) : ViewModel(), ContainerHost<AiAssistantState, AiAssistantSideEffect> {
 
     override val container: Container<AiAssistantState, AiAssistantSideEffect> = container(
         initialState = AiAssistantState(),
@@ -45,34 +48,24 @@ internal class AiAssistantViewModel : ViewModel(), ContainerHost<AiAssistantStat
 
     private fun onQuestionSubmitted() = intent {
         val question = state.question.trim()
-        if (question.isEmpty()) return@intent
+        if (question.isEmpty() || state.isLoading) return@intent
 
         reduce {
             state.copy(
+                isLoading = true,
                 question = "",
-                messages = state.messages + AiMessage(
-                    question = question,
-                    answer = buildAiAnswer(question),
-                ),
             )
         }
-    }
 
-    private fun buildAiAnswer(question: String): String {
-        val normalizedQuestion = question.lowercase()
-
-        return when {
-            "unut" in normalizedQuestion || "ichmad" in normalizedQuestion ->
-                "Smart MedBox AI oxirgi ochilish va qabul tarixiga qarab davoni tashlash xavfini belgilaydi. Dorini qabul qilmagan bo‘lsangiz, shifokor ko‘rsatmasiga muvofiq keyingi dozani aniqlashtiring."
-
-            "yon" in normalizedQuestion || "ta’sir" in normalizedQuestion || "ta'sir" in normalizedQuestion ->
-                "Nojo‘ya ta’sir sezilsa, dorini o‘zboshimchalik bilan almashtirmang. Belgilar kuchaysa, Support yoki SOS bo‘limi orqali tibbiy xizmatga murojaat qiling."
-
-            "qachon" in normalizedQuestion || "vaqt" in normalizedQuestion ->
-                "Qabul vaqti dori yo‘riqnomasi va shifokor rejasi asosida nazorat qilinadi. Smart MedBox real ochilish harakatini ko‘rib, kechikish xavfini oldindan ko‘rsatadi."
-
-            else ->
-                "Savolingiz qabul intizomi, dori xavfsizligi yoki davoni davom ettirish bilan bog‘liq bo‘lsa, Smart MedBox AI holatni tahlil qiladi va xavf belgilarini oldindan ajratib beradi."
+        val answer = openAiRepository.askMedicalQuestion(question)
+        reduce {
+            state.copy(
+                isLoading = false,
+                messages = state.messages + AiMessage(
+                    question = question,
+                    answer = answer,
+                ),
+            )
         }
     }
 }
